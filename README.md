@@ -11,3 +11,6 @@ nimble test
 nimber build
 ./dict_compression
 ```
+
+### NOTE  
+This program runs *only* on macOS and GNU/Linux, because the program will process the `/usr/share/dict/words` file, stored in the filesystem.
