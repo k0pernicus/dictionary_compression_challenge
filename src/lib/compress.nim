@@ -19,7 +19,7 @@ proc getRoot*(rootWord, otherWord: string): uint32 =
   if longWord.startsWith(shortWord):
     return (uint32) shortWord.len() 
   # Custom computation
-  for i in 0..shortWord.len():
+  for i in 0..<shortWord.len():
     if shortWord[i] != longWord[i]:
       break
     result += 1

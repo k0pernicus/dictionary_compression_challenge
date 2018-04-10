@@ -22,11 +22,11 @@ proc actionOnDictionary(dictionary: Dictionary, feat: CompressionBehavior): Dict
   var rootWord = dictionary[0]
   result = @[rootWord]
   if feat == CompressionBehavior.comp:
-    for word in dictionary[1..dictionary.len() - 1]:
+    for word in dictionary[1..<dictionary.len()]:
       result.add compress(rootWord, word)
       rootWord = word
   else:
-    for word in dictionary[1..dictionary.len() - 1]:
+    for word in dictionary[1..<dictionary.len()]:
       rootWord = uncompress(rootWord, word)
       result.add rootWord
 
