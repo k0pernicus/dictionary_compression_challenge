@@ -1,5 +1,6 @@
 import lib.compress
 import lib.uncompress
+import os
 import streams
 import strformat
 import strutils
@@ -13,7 +14,6 @@ type
   CompressionBehavior = enum
     comp, uncomp
 
-const DICTIONARY_PATH: string = "/usr/share/dict/words"
 const COMPRESSED_FILE_PATH = "compressed_dictionary.txt"
 const UNCOMPRESSED_FILE_PATH = "uncompressed_dictionary.txt"
 
@@ -40,6 +40,9 @@ proc actionOnDictionaryFromFile(pathfile: string, feat: CompressionBehavior) =
   if not isNil(fs):
     while fs.readLine(line):
       dictionary.add(line.toLowerAscii())
+  else:
+    echo fmt("Canno't open '{pathfile}' file")
+    quit(QuitFailure)
   let newDictionary = actionOnDictionary(dictionary, feat)
   var ofs = newFileStream(ofpath, fmWrite)
   if not isNil(ofs):
@@ -47,11 +50,19 @@ proc actionOnDictionaryFromFile(pathfile: string, feat: CompressionBehavior) =
       ofs.writeLine(cWord)
   else:
     echo fmt("Canno't open '{ofpath}' file")
+    quit(QuitFailure)
 
 when isMainModule:
-  echo fmt("> Compressing {DICTIONARY_PATH} in {COMPRESSED_FILE_PATH}...")
-  actionOnDictionaryFromFile(DICTIONARY_PATH, CompressionBehavior.comp)
+  let argv = commandLineParams()
+  if argv.len() == 0:
+    let programName = getAppFilename()
+    echo "Please to insert a text file that contains all the words to compress."
+    echo fmt("For example: `{programName} /usr/share/dict/words`")
+    quit(QuitFailure)
+  let input_file = argv[0]
+  echo fmt("> Compressing {input_file} into {COMPRESSED_FILE_PATH}...")
+  actionOnDictionaryFromFile(input_file, CompressionBehavior.comp)
   echo "Done!"
-  echo fmt("> Uncompressing {COMPRESSED_FILE_PATH} in {UNCOMPRESSED_FILE_PATH}...")
+  echo fmt("> Uncompressing {COMPRESSED_FILE_PATH} into {UNCOMPRESSED_FILE_PATH}...")
   actionOnDictionaryFromFile(COMPRESSED_FILE_PATH, CompressionBehavior.uncomp)
   echo "Done!"
